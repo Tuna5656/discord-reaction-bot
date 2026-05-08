@@ -117,31 +117,28 @@ async def on_raw_reaction_add(payload):
 
                     break
 
-    # =========================
-    # GIF SYSTEM (FIXED LOCATION)
-    # =========================
+# =========================
+# GIF SYSTEM (FIXED PROPERLY)
+# =========================
+
+if str(payload.emoji) == GIF_TRIGGER_EMOJI:
 
     if message.id in gif_replied_messages:
         return
 
-    for reaction in message.reactions:
+    if message.id in processing_gif:
+        return
 
-        if str(reaction.emoji) == GIF_TRIGGER_EMOJI:
+    if reaction.count < GIF_REACTION_REQUIREMENT:
+        return
 
-            if reaction.count >= GIF_REACTION_REQUIREMENT:
+    processing_gif.add(message.id)
+    gif_replied_messages.add(message.id)
 
-                if message.id in processing_gif:
-                    return
-
-                processing_gif.add(message.id)
-                gif_replied_messages.add(message.id)
-
-                try:
-                    gif_url = random.choice(GIFS)
-                    await message.reply(gif_url)
-                finally:
-                    processing_gif.discard(message.id)
-
-                break
+    try:
+        gif_url = random.choice(GIFS)
+        await message.reply(gif_url)
+    finally:
+        processing_gif.discard(message.id)
 
 bot.run(TOKEN)
