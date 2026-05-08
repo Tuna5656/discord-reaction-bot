@@ -182,33 +182,36 @@ async def on_raw_reaction_add(payload):
                         await channel.send(f"{member.mention}'s role expired.")
                 break
 
-    # =========================
+   # =========================
     # GIF SYSTEM
     # =========================
     if str(payload.emoji) == GIF_TRIGGER_EMOJI:
-        if message.id in gif_replied_messages:
+        # First check - fast fail
+        if payload.message_id in gif_replied_messages:
             return
-        if message.id in processing_gif:
+        if payload.message_id in processing_gif:
             return
 
-        # Find the matching reaction to check count
-        gif_reaction = None
-        for r in message.reactions:
-            if str(r.emoji) == GIF_TRIGGER_EMOJI:
-                gif_reaction = r
-                break
-
+        # Check reaction count (all sync, no awaits)
+        gif_reaction = next(
+            (r for r in message.reactions if str(r.emoji) == GIF_TRIGGER_EMOJI),
+            None
+        )
         if gif_reaction is None or gif_reaction.count < GIF_REACTION_REQUIREMENT:
             return
 
-        processing_gif.add(message.id)
-        gif_replied_messages.add(message.id)
-        try:
-            gif_url = random.choice(GIFS)
-            await message.reply(gif_url)
-        finally:
-            processing_gif.discard(message.id)
+        # Second check + claim — no awaits between here and .add(), so this is atomic
+        if payload.message_id in gif_replied_messages:
+            return
+        if payload.message_id in processing_gif:
+            return
 
+        processing_gif.add(payload.message_id)
+        gif_replied_messages.add(payload.message_id)
+        try:
+            await message.reply(random.choice(GIFS))
+        finally:
+            processing_gif.discard(payload.message_id)
 
 bot.run(TOKEN)
 
