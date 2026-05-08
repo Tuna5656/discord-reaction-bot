@@ -13,18 +13,14 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 
 processing_gif = set()
 
-TARGET_STICKER_ID = 1476929209363599400
-STICKER_GIF_CHANCE = 5  # 1 in 5
-CUSTOM_GIF_URL = "https://cdn.discordapp.com/attachments/1402362385108435004/1502317751891398656/screaming-gif.gif?ex=69ff45ef&is=69fdf46f&hm=c60b30677c9a0a54c10a76de6fc04b1ed91ef18da005b0e217881e3ef98fb602&"
-
 ROLE_EMOJI = "<:_freak:1501983205627269170>"
-ROLE_REACTION_REQUIREMENT = 10
+ROLE_REACTION_REQUIREMENT = 5
 ROLE_NAME = "freak"
 
 REWARD_MESSAGES = [
     "freak...",
     "shame...",
-    "certified freak..."
+    "thumbs down emoji..."
 ]
 
 TRIGGER_EMOJI = "<:stupid_neco:1459457937985769474>"
@@ -58,19 +54,6 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-
-    if message.stickers:
-
-        for sticker in message.stickers:
-
-            if str(sticker.id) == TARGET_STICKER_ID:
-
-                roll = random.randint(1, 5)
-
-                if roll == 1:
-                    await message.reply(CUSTOM_GIF_URL)
-
-                break
 
     if message.author.bot:
         return
@@ -131,7 +114,7 @@ async def on_raw_reaction_add(payload):
                             f"{reward_message}\n"
                             f"{author.mention} got "
                             f"the {role.name} role "
-                            f"for 24 hours..."
+                            f"for 24 hours!"
                         )
 
                         await asyncio.sleep(86400)
