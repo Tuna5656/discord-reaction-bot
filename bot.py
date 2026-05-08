@@ -16,15 +16,15 @@ ROLE_REACTION_REQUIREMENT = 8
 ROLE_NAME = "freak"
 REWARD_MESSAGES = [
     "freak...",
-    "shame...",
-    "thumbs down emoji..."
+    "major freak...",
+    "certified freak..."
 ]
 
 TRIGGER_EMOJI = "<:stupid_neco:1459457937985769474>"
 BOT_REACTION = "<:stupid_neco:1459457937985769474>"
 
 GIF_TRIGGER_EMOJI = "<:_saint:1501983273381789727>"
-GIF_REACTION_REQUIREMENT = 6
+GIF_REACTION_REQUIREMENT = 2
 GIFS = [
     "https://tenor.com/view/montgomery-swizzenbocher-iii-gif-15095346273009658011"
 ]
@@ -83,7 +83,7 @@ async def on_raw_reaction_add(payload):
                         reward_message = random.choice(REWARD_MESSAGES)
                         await message.reply(
                             f"{reward_message}\n"
-                            f"{member.mention} got {role.name} role for 24h!"
+                            f"{member.mention} got {role.name} role for 24h..."
                         )
                         await asyncio.sleep(86400)
                         await member.remove_roles(role)
