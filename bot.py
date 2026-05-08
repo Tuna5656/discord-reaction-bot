@@ -16,8 +16,8 @@ ROLE_REACTION_REQUIREMENT = 8
 ROLE_NAME = "freak"
 REWARD_MESSAGES = [
     "freak...",
-    "major freak...",
-    "certified freak..."
+    "shame...",
+    "thumbs down emoji..."
 ]
 
 TRIGGER_EMOJI = "<:stupid_neco:1459457937985769474>"
@@ -83,7 +83,7 @@ async def on_raw_reaction_add(payload):
                         reward_message = random.choice(REWARD_MESSAGES)
                         await message.reply(
                             f"{reward_message}\n"
-                            f"{member.mention} got {role.name} role for 24h..."
+                            f"{member.mention} got {role.name} role for 24h!"
                         )
                         await asyncio.sleep(86400)
                         await member.remove_roles(role)
