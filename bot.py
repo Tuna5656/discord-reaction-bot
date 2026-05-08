@@ -70,20 +70,18 @@ async def on_raw_reaction_add(payload):
         return
 
     guild = bot.get_guild(payload.guild_id)
-
     if guild is None:
         return
 
     channel = guild.get_channel(payload.channel_id)
-
     if channel is None:
         return
 
-    message = await channel.fetch_message(
-        payload.message_id
-    )
+    message = await channel.fetch_message(payload.message_id)
 
+    # =========================
     # ROLE SYSTEM
+    # =========================
 
     if message.id not in rewarded_messages:
 
@@ -95,64 +93,55 @@ async def on_raw_reaction_add(payload):
 
                     rewarded_messages.add(message.id)
 
-                    author = message.author
+                    member = await guild.fetch_member(message.author.id)
 
-                    role = discord.utils.get(
-                        guild.roles,
-                        name=ROLE_NAME
-                    )
+                    role = discord.utils.get(guild.roles, name=ROLE_NAME)
 
                     if role:
+                        await member.add_roles(role)
 
-                        await author.add_roles(role)
-
-                        reward_message = random.choice(
-                            REWARD_MESSAGES
-                        )
+                        reward_message = random.choice(REWARD_MESSAGES)
 
                         await message.reply(
                             f"{reward_message}\n"
-                            f"{author.mention} got "
-                            f"the {role.name} role "
-                            f"for 24 hours!"
+                            f"{member.mention} got {role.name} role for 24h!"
                         )
 
                         await asyncio.sleep(86400)
 
-                        await author.remove_roles(role)
+                        await member.remove_roles(role)
 
                         await channel.send(
-                            f"{author.mention}'s "
-                            f"{role.name} role expired."
+                            f"{member.mention}'s role expired."
                         )
 
-    # GIF SYSTEM
+                    break
 
-if message.id in gif_replied_messages:
-    return
+    # =========================
+    # GIF SYSTEM (FIXED LOCATION)
+    # =========================
 
-for reaction in message.reactions:
+    if message.id in gif_replied_messages:
+        return
 
-    if str(reaction.emoji) == GIF_TRIGGER_EMOJI:
+    for reaction in message.reactions:
 
-        if reaction.count >= GIF_REACTION_REQUIREMENT:
+        if str(reaction.emoji) == GIF_TRIGGER_EMOJI:
 
-            # 🚨 LOCK immediately (prevents double triggers)
-            if message.id in processing_gif:
-                return
+            if reaction.count >= GIF_REACTION_REQUIREMENT:
 
-            processing_gif.add(message.id)
+                if message.id in processing_gif:
+                    return
 
-            gif_replied_messages.add(message.id)
+                processing_gif.add(message.id)
+                gif_replied_messages.add(message.id)
 
-            gif_url = random.choice(GIFS)
+                try:
+                    gif_url = random.choice(GIFS)
+                    await message.reply(gif_url)
+                finally:
+                    processing_gif.discard(message.id)
 
-            try:
-                await message.reply(gif_url)
-            finally:
-                # remove lock after completion
-                processing_gif.discard(message.id)
-
-            break
+                break
 
 bot.run(TOKEN)
