@@ -13,7 +13,7 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 
 processing_gif = set()
 
-TARGET_STICKER_ID = "1476929209363599400"
+TARGET_STICKER_ID = 1476929209363599400
 STICKER_GIF_CHANCE = 5  # 1 in 5
 CUSTOM_GIF_URL = "https://cdn.discordapp.com/attachments/1402362385108435004/1502317751891398656/screaming-gif.gif?ex=69ff45ef&is=69fdf46f&hm=c60b30677c9a0a54c10a76de6fc04b1ed91ef18da005b0e217881e3ef98fb602&"
 
@@ -59,18 +59,18 @@ async def on_ready():
 @bot.event
 async def on_message(message):
 
-if message.stickers:
+    if message.stickers:
 
-    for sticker in message.stickers:
+        for sticker in message.stickers:
 
-        if sticker.id == TARGET_STICKER_ID:
+            if str(sticker.id) == TARGET_STICKER_ID:
 
-            roll = random.randint(1, 5)  # 1 in 5 chance
+                roll = random.randint(1, 5)
 
-            if roll == 1:
-                await message.reply(CUSTOM_GIF_URL)
+                if roll == 1:
+                    await message.reply(CUSTOM_GIF_URL)
 
-            break
+                break
 
     if message.author.bot:
         return
