@@ -11,6 +11,8 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 # CONFIG
 # =========================
 
+processing_gif = set()
+
 ROLE_EMOJI = "<:_freak:1501983205627269170>"
 ROLE_REACTION_REQUIREMENT = 5
 ROLE_NAME = "freak"
@@ -126,20 +128,31 @@ async def on_raw_reaction_add(payload):
 
     # GIF SYSTEM
 
-    if message.id not in gif_replied_messages:
+if message.id in gif_replied_messages:
+    return
 
-        for reaction in message.reactions:
+for reaction in message.reactions:
 
-            if str(reaction.emoji) == GIF_TRIGGER_EMOJI:
+    if str(reaction.emoji) == GIF_TRIGGER_EMOJI:
 
-                if reaction.count >= GIF_REACTION_REQUIREMENT:
+        if reaction.count >= GIF_REACTION_REQUIREMENT:
 
-                    gif_replied_messages.add(
-                        message.id
-                    )
+            # 🚨 LOCK immediately (prevents double triggers)
+            if message.id in processing_gif:
+                return
 
-                    gif_url = random.choice(GIFS)
+            processing_gif.add(message.id)
 
-                    await message.reply(gif_url)
+            gif_replied_messages.add(message.id)
+
+            gif_url = random.choice(GIFS)
+
+            try:
+                await message.reply(gif_url)
+            finally:
+                # remove lock after completion
+                processing_gif.discard(message.id)
+
+            break
 
 bot.run(TOKEN)
