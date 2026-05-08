@@ -28,7 +28,7 @@ GIF_TRIGGER_EMOJI = "<:_saint:1501983273381789727>"
 GIF_REACTION_REQUIREMENT = 3
 
 GIFS = [
-    "https://media1.tenor.com/m/0X1xdOxB6JsAAAAd/montgomery-swizzenbocher-iii.gif"
+    "https://tenor.com/view/montgomery-swizzenbocher-iii-gif-15095346273009658011"
 ]
 
 # =========================
