@@ -11,9 +11,9 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 # CONFIG
 # =========================
 
-ROLE_EMOJI = ":_freak:"
+ROLE_EMOJI = "<:_freak:1501983205627269170>"
 ROLE_REACTION_REQUIREMENT = 5
-ROLE_NAME = "freak"
+ROLE_NAME = "<:_freak:1501983205627269170>"
 
 REWARD_MESSAGES = [
     "freak...",
@@ -21,10 +21,10 @@ REWARD_MESSAGES = [
     "thumbs down emoji..."
 ]
 
-TRIGGER_EMOJI = ":stupid_neco:"
-BOT_REACTION = ":stupid_neco:"
+TRIGGER_EMOJI = "<:stupid_neco:1459457937985769474>"
+BOT_REACTION = "<:stupid_neco:1459457937985769474>"
 
-GIF_TRIGGER_EMOJI = ":_saint:"
+GIF_TRIGGER_EMOJI = "<:_saint:1501983273381789727>"
 GIF_REACTION_REQUIREMENT = 3
 
 GIFS = [
