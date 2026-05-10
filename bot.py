@@ -158,7 +158,8 @@ async def on_raw_reaction_add(payload):
                         reward_message = random.choice(REWARD_MESSAGES)
                         await message.reply(
                             f"{reward_message}\n"
-                            f"{member.mention} got {role.name} role for 24h! ", "url" "https://tenor.com/view/sound-the-car-alarm-cat-gif-9895924581726852336"
+                            f"{member.mention} got {role.name} role for 24h!\n"
+                            f"https://tenor.com/view/sound-the-car-alarm-cat-gif-9895924581726852336"
                         )
                         await asyncio.sleep(86400)
                         await member.remove_roles(role)
