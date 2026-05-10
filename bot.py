@@ -6,11 +6,10 @@ from discord.ext import commands
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-
 # =========================
 # MOD CONFIG
 # =========================
-MOD_ROLE_NAME = "mod"  # change to your mod role name
+MOD_ROLE_NAME = "mod"
 # =========================
 
 # =========================
@@ -31,8 +30,6 @@ ASK_REPLIES = [
     "no",
 ]
 # =========================
-
-
 
 # =========================
 # CONFIG
@@ -109,8 +106,8 @@ async def inactivity_loop():
                 last_message_time[INACTIVITY_CHANNEL_ID] = now
 
             threshold = random.uniform(
-                INACTIVITY_MIN_HOURS * 1800,
-                INACTIVITY_MAX_HOURS * 1800
+                INACTIVITY_MIN_HOURS * 3600,
+                INACTIVITY_MAX_HOURS * 3600
             )
 
             if last is not None and (now - last) >= threshold:
@@ -135,6 +132,9 @@ async def on_message(message):
     if message.author.bot:
         return
 
+    if message.channel.id == INACTIVITY_CHANNEL_ID:
+        last_message_time[INACTIVITY_CHANNEL_ID] = asyncio.get_event_loop().time()
+
     if bot.user.mentioned_in(message) and not message.mention_everyone:
         choice = random.choice(INACTIVITY_MESSAGES)
         text = choice.get("text")
@@ -147,13 +147,71 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-#=============== replies =================
+
+# =========================
+# COMMANDS
+# =========================
 @bot.command()
 async def ask(ctx, *, question=None):
     if question is None:
         await ctx.send("ask me something!")
         return
     await ctx.reply(random.choice(ASK_REPLIES))
+
+
+def is_mod():
+    async def predicate(ctx):
+        return discord.utils.get(ctx.author.roles, name=MOD_ROLE_NAME) is not None
+    return commands.check(predicate)
+
+
+@bot.command()
+@is_mod()
+async def set_freak(ctx, count: int):
+    global ROLE_REACTION_REQUIREMENT
+    if count < 1:
+        await ctx.send("Must be at least 1.")
+        return
+    ROLE_REACTION_REQUIREMENT = count
+    await ctx.send(f"Freak = **{count}**.")
+
+
+@bot.command()
+@is_mod()
+async def set_saint(ctx, count: int):
+    global GIF_REACTION_REQUIREMENT
+    if count < 1:
+        await ctx.send("Must be at least 1.")
+        return
+    GIF_REACTION_REQUIREMENT = count
+    await ctx.send(f"saint = **{count}**.")
+
+
+@bot.command()
+@is_mod()
+async def reqs(ctx):
+    await ctx.send(
+        f"Current requirements:\n"
+        f"Freak role: **{ROLE_REACTION_REQUIREMENT}** reactions\n"
+        f"GIF trigger: **{GIF_REACTION_REQUIREMENT}** reactions"
+    )
+
+
+@set_freak.error
+@set_saint.error
+@reqs.error
+async def mod_command_error(ctx, error):
+    if isinstance(error, commands.CheckFailure):
+        await ctx.send("ur not mod.")
+    elif isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("add a number")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("That's not a valid number.")
+
+
+# =========================
+# REACTION EVENTS
+# =========================
 @bot.event
 async def on_raw_reaction_add(payload):
     if payload.member.bot:
@@ -214,58 +272,5 @@ async def on_raw_reaction_add(payload):
             gif_replied_messages.add(payload.message_id)
             await message.reply(random.choice(GIFS))
 
-
-
-def is_mod():
-    async def predicate(ctx):
-        return discord.utils.get(ctx.author.roles, name=MOD_ROLE_NAME) is not None
-    return commands.check(predicate)
-
-
-@bot.command()
-@is_mod()
-async def set_freak(ctx, count: int):
-    """Set how many freak reactions are needed to give the role."""
-    global ROLE_REACTION_REQUIREMENT
-    if count < 1:
-        await ctx.send("Must be at least 1.")
-        return
-    ROLE_REACTION_REQUIREMENT = count
-    await ctx.send(f"Freak = **{count}**.")
-
-
-@bot.command()
-@is_mod()
-async def set_saint(ctx, count: int):
-    """Set how many saint reactions are needed to send the gif."""
-    global GIF_REACTION_REQUIREMENT
-    if count < 1:
-        await ctx.send("Must be at least 1.")
-        return
-    GIF_REACTION_REQUIREMENT = count
-    await ctx.send(f"saint = **{count}**.")
-
-
-@bot.command()
-@is_mod()
-async def reqs(ctx):
-    """Show current reaction requirements."""
-    await ctx.send(
-        f"Current requirements:\n"
-        f"Freak role: **{ROLE_REACTION_REQUIREMENT}** reactions\n"
-        f"GIF trigger: **{GIF_REACTION_REQUIREMENT}** reactions"
-    )
-
-
-@setrolereq.error
-@setgifreq.error
-@reqs.error
-async def mod_command_error(ctx, error):
-    if isinstance(error, commands.CheckFailure):
-        await ctx.send("ur not mod.")
-    elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("add a number")
-    elif isinstance(error, commands.BadArgument):
-        await ctx.send("That's not a valid number.")
 
 bot.run(TOKEN)
