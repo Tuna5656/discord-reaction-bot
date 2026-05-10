@@ -14,15 +14,36 @@ MOD_ROLE_NAME = "mod"  # change to your mod role name
 # =========================
 
 # =========================
+# ASK CONFIG
+# =========================
+ASK_REPLIES = [
+    "yeah",
+    "nah",
+    "maybe...",
+    "absolutely not",
+    "obviously",
+    "idk",
+    "fo sure",
+    "naur",
+    "perhaps",
+    "🤔",
+    "yeag",
+    "no",
+]
+# =========================
+
+
+
+# =========================
 # CONFIG
 # =========================
 ROLE_EMOJI = "<:_freak:1501983205627269170>"
 ROLE_REACTION_REQUIREMENT = 8
 ROLE_NAME = "freak"
 REWARD_MESSAGES = [
-    "freak...",
+    "certified freak...",
     "shame...",
-    "thumbs down emoji..."
+    "freak detected..."
 ]
 
 TRIGGER_EMOJI = "<:stupid_neco:1459457937985769474>"
@@ -114,9 +135,6 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    if message.channel.id == INACTIVITY_CHANNEL_ID:
-        last_message_time[INACTIVITY_CHANNEL_ID] = asyncio.get_event_loop().time()
-
     if bot.user.mentioned_in(message) and not message.mention_everyone:
         choice = random.choice(INACTIVITY_MESSAGES)
         text = choice.get("text")
@@ -129,7 +147,13 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-
+#=============== replies =================
+@bot.command()
+async def ask(ctx, *, question=None):
+    if question is None:
+        await ctx.send("ask me something!")
+        return
+    await ctx.reply(random.choice(ASK_REPLIES))
 @bot.event
 async def on_raw_reaction_add(payload):
     if payload.member.bot:
@@ -159,7 +183,7 @@ async def on_raw_reaction_add(payload):
                         await message.reply(
                             f"{reward_message}\n"
                             f"{member.mention} got {role.name} role for 24h!\n"
-                            f"https://tenor.com/view/sound-the-car-alarm-cat-gif-9895924581726852336"
+                            f"https://cdn.discordapp.com/attachments/1503101647453421778/1503114422950821950/sound-the-car-alarm-cat.gif?ex=6a022be4&is=6a00da64&hm=f099cb09e387553178ecdeda9c3597b0bcbe397a8d9f3b902a2346477423fe0e&"
                         )
                         await asyncio.sleep(86400)
                         await member.remove_roles(role)
@@ -189,6 +213,9 @@ async def on_raw_reaction_add(payload):
 
             gif_replied_messages.add(payload.message_id)
             await message.reply(random.choice(GIFS))
+
+
+
 def is_mod():
     async def predicate(ctx):
         return discord.utils.get(ctx.author.roles, name=MOD_ROLE_NAME) is not None
@@ -197,26 +224,26 @@ def is_mod():
 
 @bot.command()
 @is_mod()
-async def setrolereq(ctx, count: int):
+async def set_freak(ctx, count: int):
     """Set how many freak reactions are needed to give the role."""
     global ROLE_REACTION_REQUIREMENT
     if count < 1:
         await ctx.send("Must be at least 1.")
         return
     ROLE_REACTION_REQUIREMENT = count
-    await ctx.send(f"Freak role reaction requirement set to **{count}**.")
+    await ctx.send(f"Freak = **{count}**.")
 
 
 @bot.command()
 @is_mod()
-async def setgifreq(ctx, count: int):
+async def set_saint(ctx, count: int):
     """Set how many saint reactions are needed to send the gif."""
     global GIF_REACTION_REQUIREMENT
     if count < 1:
         await ctx.send("Must be at least 1.")
         return
     GIF_REACTION_REQUIREMENT = count
-    await ctx.send(f"GIF reaction requirement set to **{count}**.")
+    await ctx.send(f"saint = **{count}**.")
 
 
 @bot.command()
@@ -235,9 +262,9 @@ async def reqs(ctx):
 @reqs.error
 async def mod_command_error(ctx, error):
     if isinstance(error, commands.CheckFailure):
-        await ctx.send("You need the mod role to use this command.")
+        await ctx.send("ur not mod.")
     elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("Please provide a number. Example: `!setrolereq 8`")
+        await ctx.send("add a number")
     elif isinstance(error, commands.BadArgument):
         await ctx.send("That's not a valid number.")
 
