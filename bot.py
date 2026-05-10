@@ -30,10 +30,9 @@ GIFS = [
 # =========================
 # INACTIVITY CONFIG
 # =========================
-INACTIVITY_CHANNEL_ID = 1478448506518638745  # <-- replace with your channel ID
+INACTIVITY_CHANNEL_ID = 1478448506518638745
 
 INACTIVITY_MESSAGES = [
-    # Text only — just put a string
     {"text": "Hello World!"},
     {"text": "Meowww"},
     {"text": "Miau"},
@@ -47,13 +46,12 @@ INACTIVITY_MESSAGES = [
     {"text": "<:aj_tongue:1291440668035518545>"},
     {"text": "<a:boing:1240335446609887243>"},
     {"text": "<:stupid_neco:1459457937985769474>"},
-    # With an image/gif URL as attachment — put a url key
     {"text": None, "url": "https://cdn.discordapp.com/attachments/1503101647453421778/1503104231173783692/tunabot_blink.gif?ex=6a022267&is=6a00d0e7&hm=a2c4bd7463e046b147efa04359afa6ff60996a42646c6125989c91324e7a771c&"},
     {"text": None, "url": "https://cdn.discordapp.com/attachments/1503101647453421778/1503101700586864750/screaming-gif.gif?ex=6a02200b&is=6a00ce8b&hm=f794849063e48a729f77e19815950c653ba08926217419b9471f3a62f81741a1&"},
 ]
 
 INACTIVITY_MIN_HOURS = 1
-INACTIVITY_MAX_HOURS = 4
+INACTIVITY_MAX_HOURS = 6
 # =========================
 
 intents = discord.Intents.default()
@@ -66,8 +64,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 rewarded_messages = set()
 gif_replied_messages = set()
 gif_locks = {}
-
-last_message_time = {}  # channel_id -> timestamp
+last_message_time = {}
 
 
 async def inactivity_loop():
@@ -78,11 +75,9 @@ async def inactivity_loop():
             now = asyncio.get_event_loop().time()
             last = last_message_time.get(INACTIVITY_CHANNEL_ID)
 
-            # If we've never seen a message, start the clock from now
             if last is None:
                 last_message_time[INACTIVITY_CHANNEL_ID] = now
 
-            # Pick a random wait threshold between 1 and 4 hours (in seconds)
             threshold = random.uniform(
                 INACTIVITY_MIN_HOURS * 1800,
                 INACTIVITY_MAX_HOURS * 1800
@@ -92,43 +87,13 @@ async def inactivity_loop():
                 choice = random.choice(INACTIVITY_MESSAGES)
                 text = choice.get("text")
                 url = choice.get("url")
-
-                if url:
-                    msg = f"{text}\n{url}" if text else url
-                else:
-                    msg = text
-
+                msg = f"{text}\n{url}" if text and url else (url or text)
                 await channel.send(msg)
-
-                # Reset the clock after sending
                 last_message_time[INACTIVITY_CHANNEL_ID] = now
 
-        # Check every 5 minutes
         await asyncio.sleep(300)
 
-@bot.event
-async def on_message(message):
-    if message.author.bot:
-        return
 
-    # Update last message time for the inactivity tracker
-    if message.channel.id == INACTIVITY_CHANNEL_ID:
-        last_message_time[INACTIVITY_CHANNEL_ID] = asyncio.get_event_loop().time()
-
-    # Reply with a random inactivity message when pinged
-    if bot.user.mentioned_in(message) and not message.mention_everyone:
-        choice = random.choice(INACTIVITY_MESSAGES)
-        text = choice.get("text")
-        url = choice.get("url")
-        if url:
-            msg = f"{text}\n{url}" if text else url
-        else:
-            msg = text
-        await message.reply(msg)
-
-    if TRIGGER_EMOJI in message.content:
-        await message.add_reaction(BOT_REACTION)
-    await bot.process_commands(message)
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
@@ -140,12 +105,19 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    # Update last message time for the inactivity tracker
     if message.channel.id == INACTIVITY_CHANNEL_ID:
         last_message_time[INACTIVITY_CHANNEL_ID] = asyncio.get_event_loop().time()
 
+    if bot.user.mentioned_in(message) and not message.mention_everyone:
+        choice = random.choice(INACTIVITY_MESSAGES)
+        text = choice.get("text")
+        url = choice.get("url")
+        msg = f"{text}\n{url}" if text and url else (url or text)
+        await message.reply(msg)
+
     if TRIGGER_EMOJI in message.content:
         await message.add_reaction(BOT_REACTION)
+
     await bot.process_commands(message)
 
 
