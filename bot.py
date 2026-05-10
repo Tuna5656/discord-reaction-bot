@@ -6,6 +6,13 @@ from discord.ext import commands
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
+
+# =========================
+# MOD CONFIG
+# =========================
+MOD_ROLE_NAME = "mod"  # change to your mod role name
+# =========================
+
 # =========================
 # CONFIG
 # =========================
@@ -48,6 +55,8 @@ INACTIVITY_MESSAGES = [
     {"text": "<:stupid_neco:1459457937985769474>"},
     {"text": None, "url": "https://cdn.discordapp.com/attachments/1503101647453421778/1503104231173783692/tunabot_blink.gif?ex=6a022267&is=6a00d0e7&hm=a2c4bd7463e046b147efa04359afa6ff60996a42646c6125989c91324e7a771c&"},
     {"text": None, "url": "https://cdn.discordapp.com/attachments/1503101647453421778/1503101700586864750/screaming-gif.gif?ex=6a02200b&is=6a00ce8b&hm=f794849063e48a729f77e19815950c653ba08926217419b9471f3a62f81741a1&"},
+    {"text": None, "url": "https://cdn.discordapp.com/attachments/488099837401759747/1448665340040187904/togif.gif?ex=6a01d73b&is=6a0085bb&hm=764f2e20af650628ffc0482c26ccc539fabab60648263aa2339769181431c56a&"},
+    {"text": None, "url": "https://media.discordapp.net/attachments/1058472840594214963/1186213255711031356/3dgifmaker63550.gif?ex=6a0189ae&is=6a00382e&hm=90ab66f731c0c3d7cbca9f746d963c0aab3094a6ee03b3a4df896de6c21fb6f9&"},
 ]
 
 INACTIVITY_MIN_HOURS = 1
@@ -149,7 +158,7 @@ async def on_raw_reaction_add(payload):
                         reward_message = random.choice(REWARD_MESSAGES)
                         await message.reply(
                             f"{reward_message}\n"
-                            f"{member.mention} got {role.name} role for 24h!"
+                            f"{member.mention} got {role.name} role for 24h! ", "url" "https://tenor.com/view/sound-the-car-alarm-cat-gif-9895924581726852336"
                         )
                         await asyncio.sleep(86400)
                         await member.remove_roles(role)
@@ -179,6 +188,56 @@ async def on_raw_reaction_add(payload):
 
             gif_replied_messages.add(payload.message_id)
             await message.reply(random.choice(GIFS))
+def is_mod():
+    async def predicate(ctx):
+        return discord.utils.get(ctx.author.roles, name=MOD_ROLE_NAME) is not None
+    return commands.check(predicate)
 
+
+@bot.command()
+@is_mod()
+async def setrolereq(ctx, count: int):
+    """Set how many freak reactions are needed to give the role."""
+    global ROLE_REACTION_REQUIREMENT
+    if count < 1:
+        await ctx.send("Must be at least 1.")
+        return
+    ROLE_REACTION_REQUIREMENT = count
+    await ctx.send(f"Freak role reaction requirement set to **{count}**.")
+
+
+@bot.command()
+@is_mod()
+async def setgifreq(ctx, count: int):
+    """Set how many saint reactions are needed to send the gif."""
+    global GIF_REACTION_REQUIREMENT
+    if count < 1:
+        await ctx.send("Must be at least 1.")
+        return
+    GIF_REACTION_REQUIREMENT = count
+    await ctx.send(f"GIF reaction requirement set to **{count}**.")
+
+
+@bot.command()
+@is_mod()
+async def reqs(ctx):
+    """Show current reaction requirements."""
+    await ctx.send(
+        f"Current requirements:\n"
+        f"Freak role: **{ROLE_REACTION_REQUIREMENT}** reactions\n"
+        f"GIF trigger: **{GIF_REACTION_REQUIREMENT}** reactions"
+    )
+
+
+@setrolereq.error
+@setgifreq.error
+@reqs.error
+async def mod_command_error(ctx, error):
+    if isinstance(error, commands.CheckFailure):
+        await ctx.send("You need the mod role to use this command.")
+    elif isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("Please provide a number. Example: `!setrolereq 8`")
+    elif isinstance(error, commands.BadArgument):
+        await ctx.send("That's not a valid number.")
 
 bot.run(TOKEN)
