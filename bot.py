@@ -19,6 +19,8 @@ ASK_REPLIES = [
     "yeah",
     "nah",
     "maybe...",
+    "how should i know..",
+    "yes",
     "absolutely not",
     "obviously",
     "idk",
@@ -28,6 +30,14 @@ ASK_REPLIES = [
     "🤔",
     "yeag",
     "no",
+    "fuck you",
+    "not sure",
+    "yeah... i think",
+    "i suppose not",
+    "true",
+    "false",
+    "fuh no",
+    "hell yeah",
 ]
 # =========================
 
@@ -58,12 +68,19 @@ GIFS = [
 INACTIVITY_CHANNEL_ID = 1478448506518638745
 
 INACTIVITY_MESSAGES = [
-    {"text": "Hello World!"},
     {"text": "Meowww"},
+    {"text": "meows"},
     {"text": "Miau"},
     {"text": "Nya"},
+    {"text": "beer?"},
+    {"text": "N-Nya!"},
     {"text": "!!!"},
+    {"text": "?!"},
     {"text": "woof.."},
+    {"text": "ughf..."},
+    {"text": "bleh.."},
+    {"text": "paws at u"},
+    {"text": "😼"},
     {"text": "👀"},
     {"text": "<:letstakealook:1478809260363087983>"},
     {"text": "<:aj_ninja:1291303302310527006>"},
@@ -106,8 +123,8 @@ async def inactivity_loop():
                 last_message_time[INACTIVITY_CHANNEL_ID] = now
 
             threshold = random.uniform(
-                INACTIVITY_MIN_HOURS * 3600,
-                INACTIVITY_MAX_HOURS * 3600
+                INACTIVITY_MIN_HOURS * 1800,
+                INACTIVITY_MAX_HOURS * 1800
             )
 
             if last is not None and (now - last) >= threshold:
