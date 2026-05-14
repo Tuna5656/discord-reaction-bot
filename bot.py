@@ -34,10 +34,13 @@ ASK_REPLIES = [
     "not sure",
     "yeah... i think",
     "i suppose not",
-    "true",
-    "false",
     "fuh no",
     "hell yeah",
+    "mhm",
+    "nuh",
+    "uhhhhh....",
+    "yuh",
+    "never",
 ]
 # =========================
 
@@ -79,6 +82,12 @@ INACTIVITY_MESSAGES = [
     {"text": "woof.."},
     {"text": "ughf..."},
     {"text": "bleh.."},
+    {"text": "noises"},
+    {"text": "pukes on the carpet"},
+    {"text": "thinks.."},
+    {"text": "I’m sorry, but I cannot fulfill this request as it goes against OpenAI use policy"},
+    {"text": "burenyuu"},
+    {"text": "die"},
     {"text": "paws at u"},
     {"text": "😼"},
     {"text": "👀"},
@@ -92,6 +101,11 @@ INACTIVITY_MESSAGES = [
     {"text": None, "url": "https://cdn.discordapp.com/attachments/1503101647453421778/1503101700586864750/screaming-gif.gif?ex=6a02200b&is=6a00ce8b&hm=f794849063e48a729f77e19815950c653ba08926217419b9471f3a62f81741a1&"},
     {"text": None, "url": "https://cdn.discordapp.com/attachments/488099837401759747/1448665340040187904/togif.gif?ex=6a01d73b&is=6a0085bb&hm=764f2e20af650628ffc0482c26ccc539fabab60648263aa2339769181431c56a&"},
     {"text": None, "url": "https://media.discordapp.net/attachments/1058472840594214963/1186213255711031356/3dgifmaker63550.gif?ex=6a0189ae&is=6a00382e&hm=90ab66f731c0c3d7cbca9f746d963c0aab3094a6ee03b3a4df896de6c21fb6f9&"},
+    {"text": None, "url": "https://media.discordapp.net/attachments/1503101647453421778/1504485445344432128/rb.gif?ex=6a0728c2&is=6a05d742&hm=9b5553b2febed7a483045d97c96a52e8e42055ba2ae187c437f850584e026655&="},
+    {"text": None, "url": "https://media.discordapp.net/attachments/1503101647453421778/1504485445671719044/neco-arc-stare.gif?ex=6a0728c2&is=6a05d742&hm=b34ac3217032233a175bbb9d9cca048aecd22a92dec7986b3258101fc207843d&="},
+    {"text": None, "url": "https://media.discordapp.net/attachments/1503101647453421778/1504485445986160821/---.gif?ex=6a0728c2&is=6a05d742&hm=353b5d58752a392cbf181817555b616c47e60ae49d1fa87edd715eebca6d10ce&="},
+    {"text": None, "url": "https://media.discordapp.net/attachments/1503101647453421778/1504485446351192146/chiikawa-furuhonya.gif?ex=6a0728c2&is=6a05d742&hm=6e741941d3d1e7ef853096237e9c34ff5c52a53ec9601e5c41852a4bc6d8b283&="},
+    {"text": None, "url": "https://media.discordapp.net/attachments/1503101647453421778/1504485446691065986/kasane-teto-teto-kasane.gif?ex=6a0728c2&is=6a05d742&hm=32d9f1f8c11961acac82ea2b98c43490fddbab98f998512ef867cbc58704f5aa&="},
 ]
 
 INACTIVITY_MIN_HOURS = 1
